@@ -24,4 +24,20 @@ This document is for the preconfigured Cisco Data Center NXOS Automation with An
    * Troubleshooting
 
     
+## Requirements
+
+* Login to Cisco dCloud
+* Laptop
+* Cisco AnyConnect (Optional)
+
+## Components
+* Cisco VIRL
+* NXOSv 7.0 (3) I7(1)
+* Ansible host - CentOS 7
+* PC Workstation at 198.18.133.252:
+	* Includes PuTTY with shortcut for Ansible host, NXOSv1, and NXOSv2
+	* Chrome with tabs open for Launch Control Center and Live Visualization Engine
+
+## Features
+
 
