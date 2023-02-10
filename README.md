@@ -21,7 +21,7 @@ This document is for the preconfigured Cisco Data Center NXOS Automation with An
    * Lab 4. Advanced Ansible
    		* 4.1Groups
    		* 4.2Roles
-   * Troubleshootin
+   * Troubleshooting
 
     
 
