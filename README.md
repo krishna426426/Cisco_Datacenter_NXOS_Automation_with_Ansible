@@ -187,7 +187,298 @@ Many network operators automate configuration using Shell or Python scripts. We 
 
 ### Automated CLI
 
-1. From the remote workstation desktop, launch putty shortcut to ‘ansible’ host.
+Step1: From the remote workstation desktop, launch putty shortcut to ‘ansible’ host.
 
 ![](imgs/17_ansible.png)
 
+Step2: We can use the following Python script to (blindly) attempt injection of CLI commands to the network devices. Enter the following command in the ansible putty terminal to view or edit the Python script in VI editor:
+
+```
+[ansible@ansible ~]$ vi dc-automation-bootcamp/nxos/lab1/cli/enable_feature_cli.py
+```
+
+The comments in the script explain what each command does. Go through the script to understand how it works.
+
+```
+#!/usr/bin/env python2
+
+import paramiko # used to create SSH sessions
+import time # used to insert pauses in the script
+
+# a list of the hosts we wish to access
+hosts = ["nxosv1"]
+
+# NXOS login details
+username = "ansible"
+password = "ansible"
+
+# Create a new Paramiko SSH connection object
+conn = paramiko.SSHClient()
+# Automatically add SSH hosts keys
+conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+# For each host we wish to connect to
+for host in hosts:
+        print "--------------------",host,"--------------------"
+        # create a shell session for multiple commands
+        conn.connect(host, 22, username, password, look_for_keys=False, allow_agent=False)
+        remote_shell = conn.invoke_shell()
+        time.sleep(2)
+        # receive remote host shell output
+        output = remote_shell.recv(65535)
+        # display the output
+        print output
+
+        # send the command "configure terminal"
+        remote_shell.send("configure terminal\n")
+        time.sleep(1)
+        output = remote_shell.recv(65535)
+        print output
+
+        # Enable feature NXAPI
+        remote_shell.send("feature nxapi\n")
+        time.sleep(1)
+        output = remote_shell.recv(65535)
+        print output
+
+        # exit the configuration mode
+        remote_shell.send("end\n")
+        time.sleep(1)
+        output = remote_shell.recv(65535)
+        print output
+        time.sleep(1)
+
+        # close the SSH session to this host we can re-use the object for the
+        # next host
+        conn.close()
+```
+Step3: Once you have gone through the script, exit the VI editor.
+
+Step4: Run the lab exercise by entering the below command in the putty terminal.
+
+
+```
+[ansible@ansible ~]$ python dc-automation-bootcamp/nxos/lab1/cli/enable_feature_cli.py
+```
+
+Step5: After running, your terminal should look like this:
+
+![](imgs/18_term.png)
+
+### Output
+
+```
+[ansible@ansible ~]$ python dc-automation-bootcamp/nxos/lab1/cli/enable_feature_cli.py -------------------- nxosv1 --------------------
+Cisco NX-OS Software
+Copyright (c) 2002-2017, Cisco Systems, Inc. All rights reserved. NX-OSv9K software ("NX-OSv9K Software") and related documentation, files or other reference materials ("Documentation") are
+the proprietary property and confidential information of Cisco Systems, Inc. ("Cisco") and are protected, without limitation, pursuant to United States and International copyright and trademark laws in the applicable jurisdiction which provide civil and criminal penalties for copying or distribution without Cisco's authorization.
+Any use or disclosure, in whole or in part, of the NX-OSv9K Software or Documentation to any third party for any purposes is expressly prohibited except as otherwise authorized by Cisco in writing.
+The copyrights to certain works contained herein are owned by other third parties and are used and distributed under license. Some partsof this software may be covered under the GNU Public License or the
+GNU Lesser General Public License. A copy of each such license is available at
+http://www.gnu.org/licenses/gpl.html and http://www.gnu.org/licenses/lgpl.html *************************************************************************** * NX-OSv9K is strictly limited to use for evaluation, demonstration * * and NX-OS education. Any use or disclosure, in whole or in part of * * the NX-OSv9K Software or Documentation to any third party for any * * purposes is expressly prohibited except as otherwise authorized by * * Cisco in writing. * ***************************************************************************
+nxosv1#
+configure terminal
+Enter configuration commands, one per line. End with CNTL/Z. nxosv1(config)#
+feature nxapi
+end
+
+```
+
+Step6: In the Python source file, add a block of code to show the status of the NXAPI feature. Open the script in the VI editor (refer to step 2) and add the block of code highlighted in red below. Save changes and exit the VI editor.
+
+```
+        # Enable feature NXAPI 
+        remote_shell.send("feature nxapi\n") 
+        time.sleep(1)
+        output = remote_shell.recv(65535)
+        print output
+        
+        # Show the NXAPI feature status 
+        remote_shell.send("show nxapi\n") 
+        time.sleep(1)
+        output = remote_shell.recv(65535) 
+        print output
+        time.sleep(1)
+
+        # exit the configuration mode 
+        remote_shell.send("end\n") 
+        time.sleep(1)
+        output = remote_shell.recv(65535) 
+        print output
+        time.sleep(1)
+```
+
+Step7: Run the edited script (refer to step 4). You should see the following output:
+
+![](imgs/19_term2.png)
+
+
+## Automated NXAPI
+
+On Cisco Nexus devices, configuration is performed using command-line interfaces (CLIs) that run only on the device. To improve the accessibility of the Nexus configuration, Cisco introduced NX-API REST by providing HTTP/HTTPS APIs such that:
+
+* Specific CLIs are available outside of the switch.
+* Combined configuration actions in relatively few HTTP/HTTPS operations.
+* Not only does NX-API REST support commands and switch configurations, it can also run Linux Bash commands.
+
+NX-API REST uses HTTP/HTTPS for transport. Configuration commands are encoded into the HTTP/HTTPS body and use POST as the delivery method. In the backend, NX-API REST uses the Nginx HTTP server. You can instruct the Nginx server to return requested data either in XML or JSON format.
+
+
+	Note: In order to use NXAPI, make sure that nxapi feature is enabled on the switch.
+	
+	NXAPI follows a model driven approach. Each model object can be accessed through a unique URL. 
+	
+	For more information, please refer https://developer.cisco.com/docs/nxapi-dme-model-reference/
+	
+Step1: We can use a REST API client like Postman to execute the NXAPI calls or wrap them in python script to automate the configuration tasks. In this exercise we’ll be enabling interface-vlan feature on the switch using NXAPI wrapped in a python script. Enter the following command in the ansible putty terminal to view or edit the Python script in VI editor:
+
+```
+[ansible@ansible ~]$ vi dc-automation-bootcamp/nxos/lab1/rest/enable_feature_nxapi.py
+```
+
+The comments in the script explain what each command does. Go through the script to understand how it works.
+
+```
+
+import requests # used for HTTP requests
+import urllib3 # used by HTTP session
+import json # used to parse JSON
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# a list of the hosts we wish to access
+hosts = ["nxosv1"]
+
+# For each host we wish to connect to
+for host in hosts:
+    print "\nAuthenticating with the device . . .\n"
+    # Get an authentication token for the device
+    url = "https://" + host + "/api/mo/aaaLogin.json"
+    # Login data
+    data = """
+    {
+      "aaaUser": {
+        "attributes": {
+          "name": "ansible",
+          "pwd": "ansible"
+        }
+      }
+    }
+    """
+    response = requests.post(url, data=data, headers={'Content-Type': 'application/json'}, verify
+=False)
+    # uncomment to see the raw JSON
+    # print json.dumps(response.json(), indent=2)
+
+    if response.status_code == requests.codes.ok:
+        print "Authentication successful!\n"
+    else:
+        print "Authentication failed! Please verify login credentials!\n"
+        exit(0)
+
+    token = response.json()['imdata'][0]['aaaLogin']['attributes']['token']
+    print "Authentication Token: " + token + "\n"
+
+    # Enable Interface-Vlan feature on the device
+    url = "https://" + host + "/api/mo/sys.json"
+
+    data = """{
+      "topSystem": {
+        "children": [
+          {
+            "fmEntity": {
+              "children": [
+                {
+                  "fmInterfaceVlan": {
+                    "attributes": {
+                      "adminSt": "enabled"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }"""
+
+    cookie = {'APIC-Cookie': token}
+    response = requests.post(url, cookies=cookie, data=data, headers={'Content-Type': 'application/json'}, verify=False)
+
+    if response.status_code == requests.codes.ok:
+        print "Interface-VLAN feature enabled successfully on the device!\n"
+    else:
+        print "ERROR: Could not enable Interface-VLAN feature!\n"
+        exit(0)
+```
+
+Step2: Once you have gone through the script, exit the VI editor.
+
+Step3: Run the lab exercise by entering the below command in the putty terminal.
+
+```
+[ansible@ansible ~]$ python dc-automation-bootcamp/nxos/lab1/rest/enable_feature_nxapi.py
+
+```
+
+After running, your terminal should look like this:
+
+![](imgs/20_rest.png)
+
+
+### Output
+
+```
+[ansible@ansible ~]$ python dc-automation-bootcamp/nxos/lab1/rest/enable_feature_nxapi.py Authenticating with the device . . .
+
+Authentication successful!
+
+Authentication Token: MtoUYXhIeIYZ5QMbH3SQ96Jv6cJagbB17jVCnoMR+NX4fYoiuXEiGn0jDpj22aGghd7OZe2qreGZ+dGbLVSFldclUdsGMo7OhFCZ71rt l2P10OaZ+FlNKeW+w6mcwzt256HmGwE5VUYGnz+dEo+e/woQjTuO0myrVFe48rQzLOK1s3A3Owfld0iqYgbd/wnG9r4Wz24Cxalwmmnc k15ixw==
+
+Interface-VLAN feature enabled successfully on the device!
+```
+
+Step4: In the Python source file, add a block of code to fetch a list of enabled features on the device. We are going to use send a GET request to the device to achieve this. Open the script in the VI editor (refer to step 2) and add the block of code highlighted in red below. Save changes and exit the VI editor. The following 3 lines of code need to be changed.
+
+<span style="color:red">
+url = "https://" + host + "/api/mo/sys/fm.json?rsp-subtree=children"
+</style>
+
+<span style="color:red">
+response = requests.get(url, cookies=cookie, headers={'Content-Type': 'application/json'}, verify=False)
+</style>
+
+<span style="color:red">
+print json.dumps(response.json(), indent=2)
+</style>
+
+```
+	    token = response.json()['imdata'][0]['aaaLogin']['attributes']['token']
+	    print "Authentication Token: " + token + "\n"
+	
+	    # Enable Interface-Vlan feature on the device
+	    url = "https://" + host + "/api/mo/sys/fm.json?rsp-subtree=children"
+	
+	    response = requests.get(url, cookies=cookie, headers={'Content-Type': 'application/json'}, verify=False)
+	
+	    if response.status_code == requests.codes.ok:
+	        print json.dumps(response.json(), indent=2)
+	    else:
+	        print "ERROR: Could not enable Interface-VLAN feature!\n"
+	        exit(0) 
+	        
+```
+           
+ 
+
+`sys/fm` is the path for feature model object which we would like to ‘GET’ and since each feature is a child of the `sys/fm`, we include `?rsp-subtree=children` in the request so that NXOS includes the children MOs in the response.
+
+
+Step5: Run the edited script (refer to step 3). You should see the following output:
+
+See if you can identify where the NXAPI feature is shown and how you might determine whether it was enabled or not?
+
+
+![](imgs/21_term3.png)
+
+**This concludes Scenario 1, Lab 1.**
