@@ -10,17 +10,18 @@ This document is for the preconfigured Cisco Data Center NXOS Automation with An
 * Topology
 * Get Started
 * NXOS Automation
-    * Lab 1. Automation using Python
-        * AutomatedCLI
-        * AutomatedNXAPI
-    * Lab 2. Ansible Fundament
-    * Lab 3. Basic Ansible 
-        * 3.1 Loops
-        * 3.2Conditionals
-        * 3.3Templates
-    * Lab 4. Advanced Ansible
-        * 4.1Groups
-        * 4.2Roles
-    * Troubleshooting
+   * Lab 1. Automation using Python
+   		* AutomatedCLI
+   		* AutomatedNXAPI  
+	* Lab 2. Ansible Fundamentals  
+   * Lab 3. Basic Ansible
+   		* 3.1 Loops
+   		* 3.2Conditionals
+   		* 3.3Templates
+   * Lab 4. Advanced Ansible
+   		* 4.1Groups
+   		* 4.2Roles
+   * Troubleshooting
 
     
+
