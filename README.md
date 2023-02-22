@@ -93,7 +93,7 @@ In later NXOS lab exercises we highlight ways in which we can build on common co
 
 ## How to connect to lab
 
-Step 1: Once the session has been opened, You have two options to connect to the lab: **VPN and Remote Desktop (Without connecting to VPN) **
+Step 1: Once the session has been opened, You have two options to connect to the lab: **VPN and Remote Desktop (Without connecting to VPN)**
 
 **Option1 VPN:** select Details and then use Anyconnect to connect to the lab using the specified host url, login, and password.
 
