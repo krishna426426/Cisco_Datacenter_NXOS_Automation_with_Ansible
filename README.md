@@ -482,7 +482,7 @@ See if you can identify where the NXAPI feature is shown and how you might deter
 
 ![](imgs/21_term3.png)
 
-**This concludes Scenario 1, Lab 1.**
+**This concludes Lab 1.**
 
 
 # Lab 2. Ansible Fundamentals
@@ -631,7 +631,7 @@ Step7: Run the playbook several times (refer to step 6) with –v, -vv, -vvv. Ru
 ![](imgs/25_ansible3.png)
 
 
-**This concludes Scenario 1, Lab 2.**
+**This concludes Lab 2.**
 
 
 ## Lab 3. Basic Ansible
@@ -1119,7 +1119,7 @@ Interface Details:
 
 ```
 
-**This concludes Scenario 1, Lab 3.**
+**This concludes Lab 3.**
 
 
 ## Lab 4. Advanced Ansible
@@ -1430,4 +1430,4 @@ nxosv1                     : ok=11   changed=2    unreachable=0    failed=0
 nxosv2                     : ok=26   changed=21   unreachable=0    failed=0
 ```
 
-**This concludes Scenario 1, Lab 4.**
+**This concludes Lab 4.**
