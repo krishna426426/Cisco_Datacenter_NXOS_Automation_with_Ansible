@@ -93,7 +93,11 @@ In later NXOS lab exercises we highlight ways in which we can build on common co
 
 ## How to connect to lab
 
-Step 1: Once the session has been opened, You have two options to connect to the lab: **VPN and Remote Desktop (Without connecting to VPN)**
+Step 1: Once the session has been opened, You have two options to connect to the lab: 
+
+**1) VPN**
+
+**2) Remote Desktop (Without connecting to VPN)**
 
 **Option1 VPN:** select Details and then use Anyconnect to connect to the lab using the specified host url, login, and password.
 
@@ -441,17 +445,13 @@ Interface-VLAN feature enabled successfully on the device!
 
 Step4: In the Python source file, add a block of code to fetch a list of enabled features on the device. We are going to use send a GET request to the device to achieve this. Open the script in the VI editor (refer to step 2) and add the block of code highlighted in red below. Save changes and exit the VI editor. The following 3 lines of code need to be changed.
 
-<span style="color:red">
+```
 url = "https://" + host + "/api/mo/sys/fm.json?rsp-subtree=children"
-</style>
 
-<span style="color:red">
 response = requests.get(url, cookies=cookie, headers={'Content-Type': 'application/json'}, verify=False)
-</style>
 
-<span style="color:red">
 print json.dumps(response.json(), indent=2)
-</style>
+```
 
 ```
 	    token = response.json()['imdata'][0]['aaaLogin']['attributes']['token']
