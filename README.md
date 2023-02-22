@@ -2,7 +2,9 @@
 
 ## About This Lab
 
-This document is for the preconfigured Cisco Data Center NXOS Automation with Ansible includes:
+This document provides a step-by-step guide to learning how to automate Cisco NXOS using the Open Source Ansible automation technology [Ansible](http://ansible.com). It uses virtualised instances of Linux and NXOS in order to provide an environment for lab task execution and experimentation.
+
+This guide is for the preconfigured Cisco Data Center NXOS Automation with Ansible includes:
 
 * About This Lab
 * Requirements
@@ -56,7 +58,6 @@ This document is for the preconfigured Cisco Data Center NXOS Automation with An
 
 ## About these Lab Exercises
 
-This document provides a step-by-step guide to learning how to automate Cisco NXOS using the Open Source Ansible automation technology [Ansible](http://ansible.com). It uses virtualised instances of Linux and NXOS in order to provide an environment for lab task execution and experimentation.
 
 Ansible enables the simple automation of tasks across different parts of the infrastructure including compute, storage, and networking. When operating on Cisco NXOS devices Ansible uses the NXAPI, in contrast to its general server operations where it will execute Python code locally on the device under management. This centralized model of operation appeals to large-scale network operators and is one reason for Ansible’s popularity in the Service Provider industry.
 
