@@ -6,8 +6,7 @@ This document provides a step-by-step guide to learning how to automate Cisco NX
 
 This guide is for the preconfigured Cisco Data Center NXOS Automation with Ansible includes:
 
-* [About This Lab] (#About This Lab)
-* Requirements
+* [Requirements](#Requirements)
 * About The Lab Exercises
 * Topology
 * Get Started
